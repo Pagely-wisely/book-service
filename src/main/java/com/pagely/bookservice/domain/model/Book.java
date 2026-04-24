@@ -21,6 +21,8 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLRestriction("deleted_at IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book extends BaseEntity {
+    private static final String DEFAULT_THUMBNAIL_URL = "http://default_img";
+
     @Id
     @Column(nullable = false, length = 20)
     private String id;
@@ -73,17 +75,20 @@ public class Book extends BaseEntity {
     public static Book createBook(String id, String title, String authors, String publisher,
                                   String thumbnailUrl, String description, LocalDateTime publishedAt,
                                   Long categoryId, String categoryName) {
-
         return Book.builder()
                 .id(id)
                 .title(title)
                 .authors(authors)
                 .publisher(publisher)
-                .thumbnailUrl(thumbnailUrl)
+                .thumbnailUrl(resolveThumbnailUrl(thumbnailUrl))
                 .description(description)
                 .publishedAt(publishedAt)
                 .categoryId(categoryId)
                 .categoryName(categoryName)
                 .build();
+    }
+
+    private static String resolveThumbnailUrl(String thumbnailUrl) {
+        return thumbnailUrl.isBlank() ? DEFAULT_THUMBNAIL_URL : thumbnailUrl;
     }
 }

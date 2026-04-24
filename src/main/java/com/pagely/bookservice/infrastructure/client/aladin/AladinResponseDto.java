@@ -3,12 +3,16 @@ package com.pagely.bookservice.infrastructure.client.aladin;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.pagely.bookservice.application.dto.result.BookResult;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +32,17 @@ public class AladinResponseDto {
     private List<AladinItemDto> item;
 
     public BookResult toItemResponse() {
+        // TODO: 공통 예외 개발이후, null 체크 필요
         AladinItemDto item = this.getItem().getFirst();
+
+        LocalDateTime publishedAt = null;
+        if (item.getPubDate() != null && !item.getPubDate().isBlank()) {
+            try {
+                publishedAt = LocalDate.parse(item.getPubDate()).atStartOfDay();
+            } catch (DateTimeParseException e) {
+                log.error("알라딘 API 날짜 파싱 실패 ", e);
+            }
+        }
         return BookResult.builder()
                 .id(item.getIsbn13())
                 .title(item.getTitle())

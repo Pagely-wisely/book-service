@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 // TODO: retry, CircuitBreaker 설정 추가 해야 됨
 @FeignClient(
         name = "aladin",
-        url = "https://www.aladin.co.kr/ttb/api/ItemLookUp.aspx",
+        url = "https://www.aladin.co.kr/ttb/api",
         configuration = AladinFeignConfig.class
 )
 public interface AladinClient {
 
-    @GetMapping(value = "/getItem")
+    @GetMapping(value = "/ItemLookUp.aspx")
     AladinResponseDto getItem(
             @RequestParam("ItemId") String ItemId
     );

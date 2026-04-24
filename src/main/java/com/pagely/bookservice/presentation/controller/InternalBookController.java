@@ -3,7 +3,7 @@ package com.pagely.bookservice.presentation.controller;
 import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
 import com.pagely.bookservice.application.service.BookGeneratorService;
-import com.pagely.bookservice.application.service.BookService;
+import com.pagely.bookservice.application.service.BookGetOrCreateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/internal/books")
 @RequiredArgsConstructor
 public class InternalBookController {
-    private final BookService bookService;
+    private final BookGetOrCreateService bookService;
     private final BookGeneratorService bookGeneratorService;
 
     @PostMapping
     ResponseEntity<BookResult> getBook(
             @RequestBody CreateBookCommand request
     ) {
-        BookResult result = bookService.getByInternalBook(request);
+        BookResult result = bookService.getOrCreateBook(request);
         return ResponseEntity.ok(result);
     }
 

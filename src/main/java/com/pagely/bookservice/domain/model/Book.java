@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.util.StringUtils;
 
 @Getter
 @Entity
@@ -89,6 +90,6 @@ public class Book extends BaseEntity {
     }
 
     private static String resolveThumbnailUrl(String thumbnailUrl) {
-        return thumbnailUrl.isBlank() ? DEFAULT_THUMBNAIL_URL : thumbnailUrl;
+        return StringUtils.hasText(thumbnailUrl) ? DEFAULT_THUMBNAIL_URL : thumbnailUrl;
     }
 }

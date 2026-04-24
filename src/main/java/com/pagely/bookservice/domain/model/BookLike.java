@@ -27,13 +27,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class BookLike implements Serializable {
 
     @Id
-    @Column(name = "book_id", length = 20)
+    @Column(name = "book_id", nullable = false, length = 20)
     private String bookId;
 
     @Id
-    @Column(name = "user_id", nullable = false, length = 36)
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
-    
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

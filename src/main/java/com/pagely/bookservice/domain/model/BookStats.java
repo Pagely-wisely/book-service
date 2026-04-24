@@ -17,7 +17,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookStats extends BaseEntity {
     @Id
-    @Column(name = "book_id", length = 20)
+    @Column(name = "book_id", nullable = false, length = 20)
     private String bookId;
 
     @Column(name = "report_count", nullable = false)

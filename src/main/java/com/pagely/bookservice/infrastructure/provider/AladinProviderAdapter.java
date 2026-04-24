@@ -17,6 +17,7 @@ public class AladinProviderAdapter implements AladinProvider {
     @Override
     public BookResult getItem(String bookId) {
         AladinResponseDto item = aladinClient.getItem(bookId);
+        // TODO: 공통모듈 개발 완료시, 공통 예외 상속받아 null 예외처리
         return item.toItemResponse();
     }
 }

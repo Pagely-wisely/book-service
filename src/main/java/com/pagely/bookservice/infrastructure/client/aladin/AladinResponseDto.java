@@ -50,10 +50,7 @@ public class AladinResponseDto {
                 .publisher(item.getPublisher())
                 .thumbnailUrl(item.getCover())
                 .description(item.getDescription())
-                .publishedAt(
-                        LocalDate.parse(item.getPubDate())
-                                .atStartOfDay()
-                )
+                .publishedAt(publishedAt)
                 .categoryId((long) item.getCategoryId())
                 .categoryName(item.getCategoryName())
                 .build();

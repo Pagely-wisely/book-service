@@ -90,6 +90,6 @@ public class Book extends BaseEntity {
     }
 
     private static String resolveThumbnailUrl(String thumbnailUrl) {
-        return StringUtils.hasText(thumbnailUrl) ? DEFAULT_THUMBNAIL_URL : thumbnailUrl;
+        return StringUtils.hasText(thumbnailUrl) ? thumbnailUrl : DEFAULT_THUMBNAIL_URL;
     }
 }

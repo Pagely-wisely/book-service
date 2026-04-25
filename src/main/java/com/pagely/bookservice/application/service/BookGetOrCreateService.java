@@ -17,6 +17,7 @@ public class BookGetOrCreateService {
     private final BookRepository bookRepository;
 
     public BookResult getOrCreateBook(CreateBookCommand command) {
+        log.debug("도서 조회 요청");
         return bookRepository.findById(command.getId())
                 .map(BookResult::from)
                 .orElseGet(

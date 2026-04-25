@@ -1,0 +1,13 @@
+addReviewers: true
+
+addAssignees: author
+
+reviewers:
+  - jsh9057
+
+numberOfReviewers: 6
+
+numberOfAssignees: 1
+
+skipKeywords:
+  - wip

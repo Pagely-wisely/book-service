@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,8 @@ import org.springframework.util.StringUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book extends BaseEntity {
     private static final String DEFAULT_THUMBNAIL_URL = "http://default_img";
+    private static final Long DEFAULT_CATEGORY_ID = 9999999L;
+    private static final String DEFAULT_CATEGORY_NAME = "카테고리 미정";
 
     @Id
     @Column(nullable = false, length = 20)
@@ -57,7 +60,7 @@ public class Book extends BaseEntity {
     @Builder(access = AccessLevel.PRIVATE)
     private Book(String id, String title, String authors, String publisher,
                  String thumbnailUrl, String description, LocalDateTime publishedAt,
-                 Long categoryId, String categoryName) {
+                 Category category) {
         this.id = id;
         this.title = title;
         this.authors = authors;
@@ -65,7 +68,7 @@ public class Book extends BaseEntity {
         this.thumbnailUrl = thumbnailUrl;
         this.description = description;
         this.publishedAt = publishedAt;
-        this.category = Category.of(categoryId, categoryName);
+        this.category = category;
     }
 
     /*
@@ -73,9 +76,9 @@ public class Book extends BaseEntity {
      * 도서가 생성 되는 기준은 internal API 로 도서 정보 요청 시
      * DB에 해당 도서에 대한 내용이 없으면, 외부 API로 도서 정보를 요청하고 저장합니다.
      */
-    public static Book createBook(String id, String title, String authors, String publisher,
-                                  String thumbnailUrl, String description, LocalDateTime publishedAt,
-                                  Long categoryId, String categoryName) {
+    public static Book create(String id, String title, String authors, String publisher,
+                              String thumbnailUrl, String description, LocalDateTime publishedAt,
+                              Long categoryId, String categoryName) {
         return Book.builder()
                 .id(id)
                 .title(title)
@@ -84,12 +87,17 @@ public class Book extends BaseEntity {
                 .thumbnailUrl(resolveThumbnailUrl(thumbnailUrl))
                 .description(description)
                 .publishedAt(publishedAt)
-                .categoryId(categoryId)
-                .categoryName(categoryName)
+                .category(resolveCategory(categoryId, categoryName))
                 .build();
     }
 
     private static String resolveThumbnailUrl(String thumbnailUrl) {
         return StringUtils.hasText(thumbnailUrl) ? thumbnailUrl : DEFAULT_THUMBNAIL_URL;
+    }
+
+    private static Category resolveCategory(Long categoryId, String categoryName) {
+        Long resolvedId = Objects.isNull(categoryId) ? DEFAULT_CATEGORY_ID : categoryId;
+        String resolvedName = StringUtils.hasText(categoryName) ? categoryName : DEFAULT_CATEGORY_NAME;
+        return Category.of(resolvedId, resolvedName);
     }
 }

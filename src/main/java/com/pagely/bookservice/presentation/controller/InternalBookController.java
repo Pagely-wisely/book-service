@@ -7,8 +7,9 @@ import com.pagely.bookservice.application.service.BookGetOrCreateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,11 +21,14 @@ public class InternalBookController {
     private final BookGetOrCreateService bookService;
     private final BookGeneratorService bookGeneratorService;
 
-    @PostMapping
-    ResponseEntity<BookResult> getBook(
-            @RequestBody CreateBookCommand request
+    @GetMapping("/{bookId}")
+    public ResponseEntity<BookResult> getBook(
+            @PathVariable String bookId
     ) {
-        BookResult result = bookService.getOrCreateBook(request);
+        BookResult result = bookService.getOrCreateBook(
+                CreateBookCommand.builder()
+                        .id(bookId)
+                        .build());
         return ResponseEntity.ok(result);
     }
 

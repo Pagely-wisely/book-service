@@ -25,10 +25,7 @@ public class BookController {
             @PathVariable String bookId,
             @RequestHeader("X-User-Id") UUID userId
     ) {
-        bookLikeCommandService.createBookLike(CreateBookLikeCommand.builder()
-                .bookId(bookId)
-                .userId(userId)
-                .build());
+        bookLikeCommandService.createBookLike(new CreateBookLikeCommand(bookId, userId));
         return ApiResponse.created();
     }
 
@@ -37,10 +34,7 @@ public class BookController {
             @PathVariable String bookId,
             @RequestHeader("X-User-Id") UUID userId
     ) {
-        bookLikeCommandService.deleteBookLike(DeleteBookLikeCommand.builder()
-                .bookId(bookId)
-                .userId(userId)
-                .build());
+        bookLikeCommandService.deleteBookLike(new DeleteBookLikeCommand(bookId, userId));
         return ApiResponse.ok();
     }
 }

@@ -27,9 +27,7 @@ public class BookGeneratorService {
                         continue;
                     }
                     try {
-                        bookService.getOrCreateBook(CreateBookCommand.builder()
-                                .id(isbn.trim())
-                                .build());
+                        bookService.getOrCreateBook(new CreateBookCommand(isbn));
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();

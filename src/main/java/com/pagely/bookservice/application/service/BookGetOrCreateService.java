@@ -18,11 +18,11 @@ public class BookGetOrCreateService {
 
     public BookResult getOrCreateBook(CreateBookCommand command) {
         log.debug("도서 조회 요청");
-        return bookRepository.findById(command.getId())
+        return bookRepository.findById(command.bookId())
                 .map(BookResult::from)
                 .orElseGet(
                         () -> {
-                            log.debug("도서가 DB에 존재하지않아 외부 요청 후 도서 정보를 생성합니다. id: {}", command.getId());
+                            log.debug("도서가 DB에 존재하지않아 외부 요청 후 도서 정보를 생성합니다. booId: {}", command.bookId());
                             return bookCommandService.createBook(command);
                         }
                 );

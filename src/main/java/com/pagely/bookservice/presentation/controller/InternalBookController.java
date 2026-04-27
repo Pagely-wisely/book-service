@@ -26,10 +26,7 @@ public class InternalBookController {
     public ResponseEntity<ApiResponse> getBook(
             @PathVariable String bookId
     ) {
-        BookResult result = bookService.getOrCreateBook(
-                CreateBookCommand.builder()
-                        .id(bookId)
-                        .build());
+        BookResult result = bookService.getOrCreateBook(new CreateBookCommand(bookId));
         // TODO: internal api 반환 형식에 따라 presentation 레이어 DTO 추가
         return ApiResponse.ok(result);
     }

@@ -68,9 +68,11 @@ public record AladinResponseDto(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record SeriesInfo(int seriesId, String seriesName, String seriesLink) {
     }
-
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record SubInfo(String subTitle, String originalTitle, int itemPage) {
     }
 }

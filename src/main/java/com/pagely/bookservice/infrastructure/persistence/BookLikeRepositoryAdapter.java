@@ -28,8 +28,8 @@ public class BookLikeRepositoryAdapter implements BookLikeRepository {
     }
 
     @Override
-    public Optional<BookLike> findByBookId(String bookId) {
-        return jpaBookLikeRepository.findByBookId(bookId);
+    public Optional<BookLike> findById(BookLikeId bookLikeId) {
+        return jpaBookLikeRepository.findById(bookLikeId);
     }
-    
+
 }

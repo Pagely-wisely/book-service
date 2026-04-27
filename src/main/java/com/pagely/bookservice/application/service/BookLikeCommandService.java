@@ -64,10 +64,10 @@ public class BookLikeCommandService {
     public void deleteBookLike(DeleteBookLikeCommand command) {
         BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
 
-        BookLike bookLike = bookLikeRepository.findByBookId(command.getBookId())
+        BookLike bookLike = bookLikeRepository.findById(bookLikeId)
                 .orElseThrow(NoSuchElementException::new);
 
-        bookLike.hardDelete(command.getUserId(), bookLikeDeleteService);
+        bookLike.hardDelete(bookLikeId, bookLikeDeleteService);
 
         BookStats bookStats = bookStatsRepository.findById(command.getBookId())
                 // TODO: 도메인 예외로 수정해야 됨

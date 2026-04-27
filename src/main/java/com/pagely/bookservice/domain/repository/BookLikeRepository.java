@@ -11,5 +11,5 @@ public interface BookLikeRepository {
 
     void deleteById(BookLikeId bookLikeId);
 
-    Optional<BookLike> findByBookId(String bookId);
+    Optional<BookLike> findById(BookLikeId bookLike);
 }

@@ -61,7 +61,7 @@ public class BookLike {
         this.userId = userId;
     }
 
-    public void hardDelete(UUID requester, BookLikeDeleteService bookLikeDeleteService) {
+    public void hardDelete(BookLikeId requester, BookLikeDeleteService bookLikeDeleteService) {
         bookLikeDeleteService.deleteBookLike(this, requester);
     }
 

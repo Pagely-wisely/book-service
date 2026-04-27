@@ -22,7 +22,7 @@ public class BookGetOrCreateService {
                 .map(BookResult::from)
                 .orElseGet(
                         () -> {
-                            log.debug("도서가 DB에 존재하지않아 외부 요청 후 도서 정보를 생성합니다. booId: {}", command.bookId());
+                            log.debug("도서가 DB에 존재하지않아 외부 요청 후 도서 정보를 생성합니다. bookId: {}", command.bookId());
                             return bookCommandService.createBook(command);
                         }
                 );

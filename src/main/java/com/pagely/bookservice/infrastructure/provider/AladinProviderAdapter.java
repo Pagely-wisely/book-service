@@ -19,7 +19,8 @@ public class AladinProviderAdapter implements AladinProvider {
     @Override
     public BookResult getItem(String bookId) {
         AladinResponseDto item = aladinClient.getItem(bookId);
-        if (Objects.isNull(item.getItem())) {
+        if (Objects.isNull(item)
+                || Objects.isNull(item.getItem())) {
             throw new NotFoundAladinItemException();
         }
         return item.toItemResponse();

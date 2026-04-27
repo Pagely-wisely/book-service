@@ -36,7 +36,8 @@ public class AladinResponseDto {
     private List<AladinItemDto> item;
 
     public BookResult toItemResponse() {
-        if (Objects.isNull(this.getItem())) {
+        if (Objects.isNull(this.getItem())
+                || this.getItem().isEmpty()) {
             throw new NotFoundAladinItemException();
         }
         AladinItemDto item = this.getItem().getFirst();

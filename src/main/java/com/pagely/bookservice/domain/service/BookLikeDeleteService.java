@@ -19,7 +19,6 @@ public class BookLikeDeleteService {
     public void deleteBookLike(BookLike bookLike, BookLikeId requester) {
         if (!bookLike.getUserId().equals(requester.getUserId())
                 || !bookLike.getBookId().equals(requester.getBookId())) {
-            log.debug("좋아요 생성 유저: {} , 요청 유저: {}", bookLike.getUserId(), requester);
             throw new NoPermissionBookLikeException(BookErrorCode.LIKE_DELETE_FORBIDDEN);
         }
         bookLikeRepository.deleteById(requester);

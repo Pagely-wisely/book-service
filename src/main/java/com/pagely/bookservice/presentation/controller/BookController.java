@@ -3,9 +3,9 @@ package com.pagely.bookservice.presentation.controller;
 import com.pagely.bookservice.application.dto.command.CreateBookLikeCommand;
 import com.pagely.bookservice.application.dto.command.DeleteBookLikeCommand;
 import com.pagely.bookservice.application.service.BookLikeCommandService;
+import com.pagely.common.response.ApiResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +21,7 @@ public class BookController {
     private final BookLikeCommandService bookLikeCommandService;
 
     @PostMapping("/{bookId}/like")
-    public ResponseEntity<Void> addLike(
+    public ResponseEntity<ApiResponse> addLike(
             @PathVariable String bookId,
             @RequestHeader("X-User-Id") UUID userId
     ) {
@@ -29,11 +29,11 @@ public class BookController {
                 .bookId(bookId)
                 .userId(userId)
                 .build());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ApiResponse.created();
     }
 
     @DeleteMapping("/{bookId}/like")
-    public ResponseEntity<Void> removeLike(
+    public ResponseEntity<ApiResponse> removeLike(
             @PathVariable String bookId,
             @RequestHeader("X-User-Id") UUID userId
     ) {
@@ -41,6 +41,6 @@ public class BookController {
                 .bookId(bookId)
                 .userId(userId)
                 .build());
-        return ResponseEntity.ok().build();
+        return ApiResponse.ok();
     }
 }

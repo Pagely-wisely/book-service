@@ -1,5 +1,6 @@
 package com.pagely.bookservice.domain.model;
 
+import com.pagely.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

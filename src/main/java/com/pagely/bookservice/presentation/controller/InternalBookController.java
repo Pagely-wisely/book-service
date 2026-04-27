@@ -4,6 +4,7 @@ import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
 import com.pagely.bookservice.application.service.BookGeneratorService;
 import com.pagely.bookservice.application.service.BookGetOrCreateService;
+import com.pagely.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +23,21 @@ public class InternalBookController {
     private final BookGeneratorService bookGeneratorService;
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookResult> getBook(
+    public ResponseEntity<ApiResponse> getBook(
             @PathVariable String bookId
     ) {
         BookResult result = bookService.getOrCreateBook(
                 CreateBookCommand.builder()
                         .id(bookId)
                         .build());
-        return ResponseEntity.ok(result);
+        // TODO: internal api 반환 형식에 따라 presentation 레이어 DTO 추가
+        return ApiResponse.ok(result);
     }
 
     @PostMapping("/generator")
-    public ResponseEntity<String> triggerGenerator() {
+    public ResponseEntity<ApiResponse> triggerGenerator() {
         bookGeneratorService.generateBooksFromFile();
-        return ResponseEntity.accepted().body("도서 데이터 생성 작업이 시작되었습니다.");
+        // TODO: ACCEPT 같은 비동기 처리 응답 상태 필요
+        return ApiResponse.ok();
     }
 }

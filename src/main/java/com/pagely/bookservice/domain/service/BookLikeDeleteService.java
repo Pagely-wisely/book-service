@@ -1,5 +1,7 @@
 package com.pagely.bookservice.domain.service;
 
+import com.pagely.bookservice.domain.exception.BookErrorCode;
+import com.pagely.bookservice.domain.exception.detail.NoPermissionBookLikeException;
 import com.pagely.bookservice.domain.model.BookLike;
 import com.pagely.bookservice.domain.model.BookLike.BookLikeId;
 import com.pagely.bookservice.domain.repository.BookLikeRepository;
@@ -17,9 +19,7 @@ public class BookLikeDeleteService {
     public void deleteBookLike(BookLike bookLike, BookLikeId requester) {
         if (!bookLike.getUserId().equals(requester.getUserId())
                 || !bookLike.getBookId().equals(requester.getBookId())) {
-            log.debug("좋아요 생성 유저: {} , 요청 유저: {}", bookLike.getUserId(), requester);
-            // TODO: 도메인 예외로 수정해야 함
-            throw new IllegalArgumentException();
+            throw new NoPermissionBookLikeException(BookErrorCode.LIKE_DELETE_FORBIDDEN);
         }
         bookLikeRepository.deleteById(requester);
     }

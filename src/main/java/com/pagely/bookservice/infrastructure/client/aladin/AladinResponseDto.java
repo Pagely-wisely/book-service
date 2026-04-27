@@ -2,10 +2,14 @@ package com.pagely.bookservice.infrastructure.client.aladin;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.pagely.bookservice.application.dto.result.BookResult;
+import com.pagely.bookservice.infrastructure.client.aladin.exception.AladinErrorCode;
+import com.pagely.bookservice.infrastructure.client.aladin.exception.detail.InvalidFormatAladinException;
+import com.pagely.bookservice.infrastructure.client.aladin.exception.detail.NotFoundAladinItemException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +36,10 @@ public class AladinResponseDto {
     private List<AladinItemDto> item;
 
     public BookResult toItemResponse() {
-        // TODO: 공통 예외 개발이후, null 체크 필요
+        if (Objects.isNull(this.getItem())
+                || this.getItem().isEmpty()) {
+            throw new NotFoundAladinItemException();
+        }
         AladinItemDto item = this.getItem().getFirst();
 
         LocalDateTime publishedAt = null;
@@ -40,7 +47,8 @@ public class AladinResponseDto {
             try {
                 publishedAt = LocalDate.parse(item.getPubDate()).atStartOfDay();
             } catch (DateTimeParseException e) {
-                log.error("알라딘 API 날짜 파싱 실패 ", e);
+                log.error("input data: {}", item.getPubDate());
+                throw new InvalidFormatAladinException(AladinErrorCode.ALADIN_INVALID_DATE_FORMAT);
             }
         }
         return BookResult.builder()

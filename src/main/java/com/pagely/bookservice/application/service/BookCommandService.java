@@ -3,6 +3,7 @@ package com.pagely.bookservice.application.service;
 import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
 import com.pagely.bookservice.application.port.AladinProvider;
+import com.pagely.bookservice.domain.exception.detail.NotFoundBookException;
 import com.pagely.bookservice.domain.model.Book;
 import com.pagely.bookservice.domain.model.BookStats;
 import com.pagely.bookservice.domain.repository.BookRepository;
@@ -49,9 +50,7 @@ public class BookCommandService {
         } catch (DataIntegrityViolationException e) {
             log.debug("동시 생성 요청으로 중복 발생. id: {}", command.getId());
             return BookResult.from(bookRepository.findById(command.getId())
-                    .orElseThrow(() ->
-                            // TODO: 도메인 예외로 바꿔야 함
-                            new IllegalStateException("도서 생성 실패")));
+                    .orElseThrow(NotFoundBookException::new));
         }
     }
 }

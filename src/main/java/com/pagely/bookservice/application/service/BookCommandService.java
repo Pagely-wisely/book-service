@@ -4,7 +4,9 @@ import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
 import com.pagely.bookservice.application.port.AladinProvider;
 import com.pagely.bookservice.domain.model.Book;
+import com.pagely.bookservice.domain.model.BookStats;
 import com.pagely.bookservice.domain.repository.BookRepository;
+import com.pagely.bookservice.domain.repository.BookStatsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookCommandService {
     private final BookRepository bookRepository;
     private final AladinProvider aladinProvider;
+    private final BookStatsRepository bookStatsRepository;
 
     /**
      * <h1>도서 생성</h1>
@@ -35,9 +38,13 @@ public class BookCommandService {
                     Book.create(item.getId(), item.getTitle(), item.getAuthor(), item.getPublisher(),
                             item.getThumbnailUrl(), item.getDescription(), item.getPublishedAt(),
                             item.getCategoryId(), item.getCategoryName()));
-            log.info("도서 생성");
 
-            // TODO : 도서 통계 엔티티도 생성 해야 됨
+            bookStatsRepository.save(BookStats.builder()
+                    .bookId(command.getId())
+                    .build());
+            log.debug("도서 통계 생성 id: {}", command.getId());
+
+            log.info("도서 생성");
             return BookResult.from(saved);
         } catch (DataIntegrityViolationException e) {
             log.debug("동시 생성 요청으로 중복 발생. id: {}", command.getId());

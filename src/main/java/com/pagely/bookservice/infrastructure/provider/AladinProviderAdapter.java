@@ -20,9 +20,9 @@ public class AladinProviderAdapter implements AladinProvider {
     public BookResult getItem(String bookId) {
         AladinResponseDto item = aladinClient.getItem(bookId);
         if (Objects.isNull(item)
-                || Objects.isNull(item.getItem())) {
+                || Objects.isNull(item.item())) {
             throw new NotFoundAladinItemException();
         }
-        return item.toItemResponse();
+        return item.toBookResult();
     }
 }

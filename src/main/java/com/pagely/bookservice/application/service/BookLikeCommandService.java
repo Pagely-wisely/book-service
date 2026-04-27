@@ -4,14 +4,15 @@ import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.command.CreateBookLikeCommand;
 import com.pagely.bookservice.application.dto.command.DeleteBookLikeCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
+import com.pagely.bookservice.domain.exception.detail.DuplicatedBookLikeException;
+import com.pagely.bookservice.domain.exception.detail.NotFoundLikeException;
+import com.pagely.bookservice.domain.exception.detail.NotFoundStatsException;
 import com.pagely.bookservice.domain.model.BookLike;
 import com.pagely.bookservice.domain.model.BookLike.BookLikeId;
 import com.pagely.bookservice.domain.model.BookStats;
 import com.pagely.bookservice.domain.repository.BookLikeRepository;
 import com.pagely.bookservice.domain.repository.BookStatsRepository;
 import com.pagely.bookservice.domain.service.BookLikeDeleteService;
-import com.sun.jdi.request.DuplicateRequestException;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,7 @@ public class BookLikeCommandService {
         BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
 
         if (bookLikeRepository.existsById(bookLikeId)) {
-            // TODO: 도메인 예외로 수정해야 됨
-            throw new DuplicateRequestException(bookLikeId.toString());
+            throw new DuplicatedBookLikeException();
         }
 
         BookResult book = bookGetOrCreateService.getOrCreateBook(CreateBookCommand.builder()
@@ -53,8 +53,7 @@ public class BookLikeCommandService {
                 .build());
 
         BookStats bookStats = bookStatsRepository.findById(command.getBookId())
-                // TODO: 도메인 예외로 수정해야 됨
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NotFoundStatsException::new);
         bookStats.increaseLikeCount();
 
         log.debug("도서 통계 좋아요 갯수 증가 id: {}", command.getBookId());
@@ -65,13 +64,12 @@ public class BookLikeCommandService {
         BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
 
         BookLike bookLike = bookLikeRepository.findById(bookLikeId)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NotFoundLikeException::new);
 
         bookLike.hardDelete(bookLikeId, bookLikeDeleteService);
 
         BookStats bookStats = bookStatsRepository.findById(command.getBookId())
-                // TODO: 도메인 예외로 수정해야 됨
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(NotFoundStatsException::new);
         bookStats.decreaseLikeCount();
 
         log.debug("도서 통계 좋아요 갯수 감소 id: {}", command.getBookId());

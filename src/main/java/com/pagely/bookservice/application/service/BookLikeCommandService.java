@@ -54,7 +54,7 @@ public class BookLikeCommandService {
                 .orElseThrow(NotFoundStatsException::new);
         bookStats.increaseLikeCount();
 
-        log.debug("도서 통계 좋아요 갯수 증가 booId: {}", command.bookId());
+        log.debug("도서 통계 좋아요 갯수 증가 bookId: {}", command.bookId());
         log.info("도서 좋아요 생성");
     }
 
@@ -70,7 +70,7 @@ public class BookLikeCommandService {
                 .orElseThrow(NotFoundStatsException::new);
         bookStats.decreaseLikeCount();
 
-        log.debug("도서 통계 좋아요 갯수 감소 booId: {}", command.bookId());
+        log.debug("도서 통계 좋아요 갯수 감소 bookId: {}", command.bookId());
         log.info("도서 좋아요 삭제");
     }
 

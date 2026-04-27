@@ -43,12 +43,12 @@ public class BookCommandService {
             bookStatsRepository.save(BookStats.builder()
                     .bookId(command.bookId())
                     .build());
-            log.debug("도서 통계 생성 booId: {}", command.bookId());
+            log.debug("도서 통계 생성 bookId: {}", command.bookId());
 
             log.info("도서 생성");
             return BookResult.from(saved);
         } catch (DataIntegrityViolationException e) {
-            log.debug("동시 생성 요청으로 중복 발생. booId: {}", command.bookId());
+            log.debug("동시 생성 요청으로 중복 발생. bookId: {}", command.bookId());
             return BookResult.from(bookRepository.findById(command.bookId())
                     .orElseThrow(NotFoundBookException::new));
         }

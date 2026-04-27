@@ -31,7 +31,7 @@ public class BookGeneratorService {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        log.warn("도서 생성 작업이 인터럽트되어 중단됩니다. isbn={}", isbn);
+                        log.warn("도서 생성 작업이 인터럽트되어 중단됩니다. ISBN: {}", isbn);
                         break;
                     } catch (Exception e) {
                         log.error("도서 저장 실패: {} - {}", isbn, e.getMessage());

@@ -1,5 +1,6 @@
 package com.pagely.bookservice.domain.model;
 
+import com.pagely.bookservice.domain.service.BookLikeDeleteService;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -58,6 +59,10 @@ public class BookLike {
     public BookLike(String bookId, UUID userId) {
         this.bookId = bookId;
         this.userId = userId;
+    }
+
+    public void hardDelete(UUID requester, BookLikeDeleteService bookLikeDeleteService) {
+        bookLikeDeleteService.deleteBookLike(this, requester);
     }
 
     @Getter

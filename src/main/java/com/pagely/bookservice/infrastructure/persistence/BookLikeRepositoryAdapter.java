@@ -3,6 +3,7 @@ package com.pagely.bookservice.infrastructure.persistence;
 import com.pagely.bookservice.domain.model.BookLike;
 import com.pagely.bookservice.domain.model.BookLike.BookLikeId;
 import com.pagely.bookservice.domain.repository.BookLikeRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +26,10 @@ public class BookLikeRepositoryAdapter implements BookLikeRepository {
     public void deleteById(BookLikeId bookLikeId) {
         jpaBookLikeRepository.deleteById(bookLikeId);
     }
+
+    @Override
+    public Optional<BookLike> findByBookId(String bookId) {
+        return jpaBookLikeRepository.findByBookId(bookId);
+    }
+    
 }

@@ -9,6 +9,7 @@ import com.pagely.bookservice.domain.model.BookLike.BookLikeId;
 import com.pagely.bookservice.domain.model.BookStats;
 import com.pagely.bookservice.domain.repository.BookLikeRepository;
 import com.pagely.bookservice.domain.repository.BookStatsRepository;
+import com.pagely.bookservice.domain.service.BookLikeDeleteService;
 import com.sun.jdi.request.DuplicateRequestException;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class BookLikeCommandService {
     private final BookGetOrCreateService bookGetOrCreateService;
     private final BookLikeRepository bookLikeRepository;
     private final BookStatsRepository bookStatsRepository;
+    private final BookLikeDeleteService bookLikeDeleteService;
 
     /*
      * 도서 좋아요 생성 메서드
@@ -62,11 +64,10 @@ public class BookLikeCommandService {
     public void deleteBookLike(DeleteBookLikeCommand command) {
         BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
 
-        if (!bookLikeRepository.existsById(bookLikeId)) {
-            // TODO: 도메인 예외로 수정해야 됨
-            throw new DuplicateRequestException(bookLikeId.toString());
-        }
-        bookLikeRepository.deleteById(bookLikeId);
+        BookLike bookLike = bookLikeRepository.findByBookId(command.getBookId())
+                .orElseThrow(NoSuchElementException::new);
+
+        bookLike.hardDelete(command.getUserId(), bookLikeDeleteService);
 
         BookStats bookStats = bookStatsRepository.findById(command.getBookId())
                 // TODO: 도메인 예외로 수정해야 됨

@@ -6,20 +6,24 @@ import com.pagely.bookservice.application.dto.command.DeleteBookLikeCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
 import com.pagely.bookservice.domain.model.BookLike;
 import com.pagely.bookservice.domain.model.BookLike.BookLikeId;
-import com.pagely.bookservice.infrastructure.persistence.BookLikeRepositoryAdapter;
-import com.pagely.bookservice.infrastructure.persistence.BookRepositoryAdapter;
+import com.pagely.bookservice.domain.model.BookStats;
+import com.pagely.bookservice.domain.repository.BookLikeRepository;
+import com.pagely.bookservice.domain.repository.BookStatsRepository;
 import com.sun.jdi.request.DuplicateRequestException;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class BookLikeCommandService {
     private final BookGetOrCreateService bookGetOrCreateService;
-    private final BookLikeRepositoryAdapter bookLikeRepositoryAdapter;
-    private final BookRepositoryAdapter bookRepositoryAdapter;
+    private final BookLikeRepository bookLikeRepository;
+    private final BookStatsRepository bookStatsRepository;
 
     /*
      * 도서 좋아요 생성 메서드
@@ -33,7 +37,7 @@ public class BookLikeCommandService {
     public void createBookLike(CreateBookLikeCommand command) {
         BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
 
-        if (bookLikeRepositoryAdapter.existsById(bookLikeId)) {
+        if (bookLikeRepository.existsById(bookLikeId)) {
             // TODO: 도메인 예외로 수정해야 됨
             throw new DuplicateRequestException(bookLikeId.toString());
         }
@@ -41,22 +45,36 @@ public class BookLikeCommandService {
         BookResult book = bookGetOrCreateService.getOrCreateBook(CreateBookCommand.builder()
                 .id(bookLikeId.getBookId())
                 .build());
-        bookLikeRepositoryAdapter.save(BookLike.builder()
+        bookLikeRepository.save(BookLike.builder()
                 .bookId(bookLikeId.getBookId())
                 .userId(bookLikeId.getUserId())
                 .build());
-        // TODO: BookStats increaseLike 추가 해야 됨
+
+        BookStats bookStats = bookStatsRepository.findById(command.getBookId())
+                // TODO: 도메인 예외로 수정해야 됨
+                .orElseThrow(NoSuchElementException::new);
+        bookStats.increaseLikeCount();
+
+        log.debug("도서 통계 좋아요 갯수 증가 id: {}", command.getBookId());
+        log.info("도서 좋아요 생성");
     }
 
     public void deleteBookLike(DeleteBookLikeCommand command) {
         BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
 
-        if (!bookLikeRepositoryAdapter.existsById(bookLikeId)) {
+        if (!bookLikeRepository.existsById(bookLikeId)) {
             // TODO: 도메인 예외로 수정해야 됨
             throw new DuplicateRequestException(bookLikeId.toString());
         }
-        bookLikeRepositoryAdapter.deleteById(bookLikeId);
-        // TODO: BookStats decreaseLike 추가 해야 됨
+        bookLikeRepository.deleteById(bookLikeId);
+
+        BookStats bookStats = bookStatsRepository.findById(command.getBookId())
+                // TODO: 도메인 예외로 수정해야 됨
+                .orElseThrow(NoSuchElementException::new);
+        bookStats.decreaseLikeCount();
+
+        log.debug("도서 통계 좋아요 갯수 감소 id: {}", command.getBookId());
+        log.info("도서 좋아요 삭제");
     }
 
 }

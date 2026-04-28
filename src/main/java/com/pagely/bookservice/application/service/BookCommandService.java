@@ -2,7 +2,8 @@ package com.pagely.bookservice.application.service;
 
 import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
-import com.pagely.bookservice.application.port.AladinProvider;
+import com.pagely.bookservice.application.port.out.AladinProvider;
+import com.pagely.bookservice.domain.event.BookEvents;
 import com.pagely.bookservice.domain.exception.detail.NotFoundBookException;
 import com.pagely.bookservice.domain.model.Book;
 import com.pagely.bookservice.domain.model.BookStats;
@@ -22,6 +23,7 @@ public class BookCommandService {
     private final BookRepository bookRepository;
     private final AladinProvider aladinProvider;
     private final BookStatsRepository bookStatsRepository;
+    private final BookEvents bookEvents;
 
     /**
      * <h1>도서 생성</h1>
@@ -38,7 +40,7 @@ public class BookCommandService {
             Book saved = bookRepository.save(
                     Book.create(item.getId(), item.getTitle(), item.getAuthor(), item.getPublisher(),
                             item.getThumbnailUrl(), item.getDescription(), item.getPublishedAt(),
-                            item.getCategoryId(), item.getCategoryName()));
+                            item.getCategoryId(), item.getCategoryName(), bookEvents));
 
             bookStatsRepository.save(BookStats.builder()
                     .bookId(command.bookId())

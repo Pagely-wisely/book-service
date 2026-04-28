@@ -49,6 +49,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'com.h2database:h2'
+
+    implementation 'org.springframework.kafka:spring-kafka'
 }
 
 dependencyManagement {

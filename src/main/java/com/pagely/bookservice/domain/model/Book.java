@@ -1,6 +1,6 @@
 package com.pagely.bookservice.domain.model;
 
-import com.pagely.bookservice.domain.event.Events;
+import com.pagely.bookservice.domain.event.BookEvents;
 import com.pagely.bookservice.domain.event.payload.BookCreatedEvent;
 import com.pagely.common.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -81,7 +81,7 @@ public class Book extends BaseEntity {
      */
     public static Book create(String id, String title, String authors, String publisher,
                               String thumbnailUrl, String description, LocalDateTime publishedAt,
-                              Long categoryId, String categoryName) {
+                              Long categoryId, String categoryName, BookEvents events) {
         Book book = Book.builder()
                 .id(id)
                 .title(title)
@@ -92,7 +92,7 @@ public class Book extends BaseEntity {
                 .publishedAt(publishedAt)
                 .category(resolveCategory(categoryId, categoryName))
                 .build();
-        Events.trigger(BookCreatedEvent.of(book));
+        events.bookCreated(BookCreatedEvent.of(book));
         return book;
     }
 

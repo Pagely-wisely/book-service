@@ -1,7 +1,7 @@
 package com.pagely.bookservice.infrastructure.provider;
 
 import com.pagely.bookservice.application.dto.result.BookResult;
-import com.pagely.bookservice.application.port.AladinProvider;
+import com.pagely.bookservice.application.port.out.AladinProvider;
 import com.pagely.bookservice.infrastructure.client.aladin.AladinClient;
 import com.pagely.bookservice.infrastructure.client.aladin.AladinResponseDto;
 import com.pagely.bookservice.infrastructure.client.aladin.exception.detail.NotFoundAladinItemException;

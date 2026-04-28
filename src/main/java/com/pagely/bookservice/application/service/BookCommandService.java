@@ -2,7 +2,7 @@ package com.pagely.bookservice.application.service;
 
 import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
-import com.pagely.bookservice.application.port.AladinProvider;
+import com.pagely.bookservice.application.port.out.AladinProvider;
 import com.pagely.bookservice.domain.exception.detail.NotFoundBookException;
 import com.pagely.bookservice.domain.model.Book;
 import com.pagely.bookservice.domain.model.BookStats;

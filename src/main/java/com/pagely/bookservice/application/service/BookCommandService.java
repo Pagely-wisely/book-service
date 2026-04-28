@@ -33,7 +33,7 @@ public class BookCommandService {
      * </ul>
      */
     public BookResult createBook(CreateBookCommand command) {
-        BookResult item = aladinProvider.getItem(command.getId());
+        BookResult item = aladinProvider.getItem(command.bookId());
         try {
             Book saved = bookRepository.save(
                     Book.create(item.getId(), item.getTitle(), item.getAuthor(), item.getPublisher(),
@@ -41,15 +41,15 @@ public class BookCommandService {
                             item.getCategoryId(), item.getCategoryName()));
 
             bookStatsRepository.save(BookStats.builder()
-                    .bookId(command.getId())
+                    .bookId(command.bookId())
                     .build());
-            log.debug("도서 통계 생성 id: {}", command.getId());
+            log.debug("도서 통계 생성 bookId: {}", command.bookId());
 
             log.info("도서 생성");
             return BookResult.from(saved);
         } catch (DataIntegrityViolationException e) {
-            log.debug("동시 생성 요청으로 중복 발생. id: {}", command.getId());
-            return BookResult.from(bookRepository.findById(command.getId())
+            log.debug("동시 생성 요청으로 중복 발생. bookId: {}", command.bookId());
+            return BookResult.from(bookRepository.findById(command.bookId())
                     .orElseThrow(NotFoundBookException::new));
         }
     }

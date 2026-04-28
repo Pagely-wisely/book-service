@@ -38,41 +38,39 @@ public class BookLikeCommandService {
      * 도서 정보를 생성하기 전에, 기존에 등록된 좋아요 여부를 먼저 체크합니다.
      */
     public void createBookLike(CreateBookLikeCommand command) {
-        BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
+        BookLikeId bookLikeId = new BookLikeId(command.bookId(), command.userId());
 
         if (bookLikeRepository.existsById(bookLikeId)) {
             throw new DuplicatedBookLikeException();
         }
 
-        BookResult book = bookGetOrCreateService.getOrCreateBook(CreateBookCommand.builder()
-                .id(bookLikeId.getBookId())
-                .build());
+        BookResult book = bookGetOrCreateService.getOrCreateBook(new CreateBookCommand(bookLikeId.getBookId()));
         bookLikeRepository.save(BookLike.builder()
                 .bookId(bookLikeId.getBookId())
                 .userId(bookLikeId.getUserId())
                 .build());
 
-        BookStats bookStats = bookStatsRepository.findById(command.getBookId())
+        BookStats bookStats = bookStatsRepository.findById(command.bookId())
                 .orElseThrow(NotFoundStatsException::new);
         bookStats.increaseLikeCount();
 
-        log.debug("도서 통계 좋아요 갯수 증가 id: {}", command.getBookId());
+        log.debug("도서 통계 좋아요 갯수 증가 bookId: {}", command.bookId());
         log.info("도서 좋아요 생성");
     }
 
     public void deleteBookLike(DeleteBookLikeCommand command) {
-        BookLikeId bookLikeId = new BookLikeId(command.getBookId(), command.getUserId());
+        BookLikeId bookLikeId = new BookLikeId(command.bookId(), command.userId());
 
         BookLike bookLike = bookLikeRepository.findById(bookLikeId)
                 .orElseThrow(NotFoundLikeException::new);
 
         bookLike.hardDelete(bookLikeId, bookLikeDeleteService);
 
-        BookStats bookStats = bookStatsRepository.findById(command.getBookId())
+        BookStats bookStats = bookStatsRepository.findById(command.bookId())
                 .orElseThrow(NotFoundStatsException::new);
         bookStats.decreaseLikeCount();
 
-        log.debug("도서 통계 좋아요 갯수 감소 id: {}", command.getBookId());
+        log.debug("도서 통계 좋아요 갯수 감소 bookId: {}", command.bookId());
         log.info("도서 좋아요 삭제");
     }
 

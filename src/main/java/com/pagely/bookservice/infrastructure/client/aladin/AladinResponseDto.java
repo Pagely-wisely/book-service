@@ -9,108 +9,70 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Objects;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class AladinResponseDto {
-    private String version;
-    private String logo;
-    private String title;
-    private String link;
-    private String pubDate;
-    private int totalResults;
-    private int startIndex;
-    private int itemsPerPage;
-    private String query;
-    private int searchCategoryId;
-    private String searchCategoryName;
-    private List<AladinItemDto> item;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record AladinResponseDto(
+        String title,
+        int totalResults,
+        List<AladinItemDto> item
+) {
+    private static final Logger log = LoggerFactory.getLogger(AladinResponseDto.class);
 
-    public BookResult toItemResponse() {
-        if (Objects.isNull(this.getItem())
-                || this.getItem().isEmpty()) {
+    public BookResult toBookResult() {
+        if (item == null || item.isEmpty()) {
             throw new NotFoundAladinItemException();
         }
-        AladinItemDto item = this.getItem().getFirst();
 
-        LocalDateTime publishedAt = null;
-        if (item.getPubDate() != null && !item.getPubDate().isBlank()) {
-            try {
-                publishedAt = LocalDate.parse(item.getPubDate()).atStartOfDay();
-            } catch (DateTimeParseException e) {
-                log.error("input data: {}", item.getPubDate());
-                throw new InvalidFormatAladinException(AladinErrorCode.ALADIN_INVALID_DATE_FORMAT);
-            }
-        }
+        AladinItemDto targetItem = item.getFirst();
+
         return BookResult.builder()
-                .id(item.getIsbn13())
-                .title(item.getTitle())
-                .author(item.getAuthor())
-                .publisher(item.getPublisher())
-                .thumbnailUrl(item.getCover())
-                .description(item.getDescription())
-                .publishedAt(publishedAt)
-                .categoryId((long) item.getCategoryId())
-                .categoryName(item.getCategoryName())
+                .id(targetItem.isbn13())
+                .title(targetItem.title())
+                .author(targetItem.author())
+                .publisher(targetItem.publisher())
+                .thumbnailUrl(targetItem.cover())
+                .description(targetItem.description())
+                .publishedAt(parsePublishedAt(targetItem.pubDate()))
+                .categoryId((long) targetItem.categoryId())
+                .categoryName(targetItem.categoryName())
                 .build();
     }
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @JsonIgnoreProperties(ignoreUnknown = true) // 정의하지 않은 필드 무시
-    public static class AladinItemDto {
-        private String title;
-        private String link;
-        private String author;
-        private String pubDate;
-        private String description;
-        private String isbn;
-        private String isbn13;
-        private Long itemId;
-        private int priceSales;
-        private int priceStandard;
-        private String mallType;
-        private String stockStatus;
-        private int mileage;
-        private String cover;
-        private int categoryId;
-        private String categoryName;
-        private String publisher;
-        private int salesPoint;
-        private boolean adult;
-        private boolean fixedPrice;
-        private int customerReviewRank;
-
-        private SeriesInfo seriesInfo;
-        private SubInfo subInfo;
-
-        @Getter
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class SeriesInfo {
-            private int seriesId;
-            private String seriesLink;
-            private String seriesName;
+    private LocalDateTime parsePublishedAt(String pubDate) {
+        if (pubDate == null || pubDate.isBlank()) {
+            return null;
         }
-
-        @Getter
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class SubInfo {
-            private String subTitle;
-            private String originalTitle;
-            private int itemPage;
+        try {
+            return LocalDate.parse(pubDate).atStartOfDay();
+        } catch (DateTimeParseException e) {
+            log.error("input : {}", pubDate);
+            throw new InvalidFormatAladinException(AladinErrorCode.ALADIN_INVALID_DATE_FORMAT);
         }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record AladinItemDto(
+            String title,
+            String author,
+            String pubDate,
+            String description,
+            String isbn13,
+            String cover,
+            int categoryId,
+            String categoryName,
+            String publisher,
+            SeriesInfo seriesInfo,
+            SubInfo subInfo
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record SeriesInfo(int seriesId, String seriesName, String seriesLink) {
+    }
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record SubInfo(String subTitle, String originalTitle, int itemPage) {
     }
 }

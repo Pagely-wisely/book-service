@@ -1,12 +1,12 @@
 package com.pagely.bookservice.application.service;
 
-import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.command.CreateBookLikeCommand;
 import com.pagely.bookservice.application.dto.command.DeleteBookLikeCommand;
-import com.pagely.bookservice.application.dto.result.BookResult;
+import com.pagely.bookservice.domain.event.BookEvents;
 import com.pagely.bookservice.domain.exception.detail.DuplicatedBookLikeException;
 import com.pagely.bookservice.domain.exception.detail.NotFoundLikeException;
 import com.pagely.bookservice.domain.exception.detail.NotFoundStatsException;
+import com.pagely.bookservice.domain.model.Book;
 import com.pagely.bookservice.domain.model.BookLike;
 import com.pagely.bookservice.domain.model.BookLike.BookLikeId;
 import com.pagely.bookservice.domain.model.BookStats;
@@ -27,6 +27,7 @@ public class BookLikeCommandService {
     private final BookLikeRepository bookLikeRepository;
     private final BookStatsRepository bookStatsRepository;
     private final BookLikeDeleteService bookLikeDeleteService;
+    private final BookEvents bookEvents;
 
     /*
      * 도서 좋아요 생성 메서드
@@ -44,11 +45,9 @@ public class BookLikeCommandService {
             throw new DuplicatedBookLikeException();
         }
 
-        BookResult book = bookGetOrCreateService.getOrCreateBook(new CreateBookCommand(bookLikeId.getBookId()));
-        bookLikeRepository.save(BookLike.builder()
-                .bookId(bookLikeId.getBookId())
-                .userId(bookLikeId.getUserId())
-                .build());
+        Book book = bookGetOrCreateService.getOrCreateBookEntity(command.bookId());
+
+        bookLikeRepository.save(BookLike.create(book, command.userId(), bookEvents));
 
         BookStats bookStats = bookStatsRepository.findById(command.bookId())
                 .orElseThrow(NotFoundStatsException::new);
@@ -64,7 +63,8 @@ public class BookLikeCommandService {
         BookLike bookLike = bookLikeRepository.findById(bookLikeId)
                 .orElseThrow(NotFoundLikeException::new);
 
-        bookLike.hardDelete(bookLikeId, bookLikeDeleteService);
+        Book book = bookGetOrCreateService.getOrCreateBookEntity(command.bookId());
+        bookLike.hardDelete(book, bookLikeId, bookLikeDeleteService, bookEvents);
 
         BookStats bookStats = bookStatsRepository.findById(command.bookId())
                 .orElseThrow(NotFoundStatsException::new);

@@ -2,6 +2,8 @@ package com.pagely.bookservice.application.service;
 
 import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
+import com.pagely.bookservice.domain.exception.detail.NotFoundBookException;
+import com.pagely.bookservice.domain.model.Book;
 import com.pagely.bookservice.domain.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ public class BookGetOrCreateService {
     private final BookCommandService bookCommandService;
     private final BookRepository bookRepository;
 
+    // API 응답용
     public BookResult getOrCreateBook(CreateBookCommand command) {
         log.debug("도서 조회 요청");
         return bookRepository.findById(command.bookId())
@@ -26,5 +29,15 @@ public class BookGetOrCreateService {
                             return bookCommandService.createBook(command);
                         }
                 );
+    }
+
+    // 내부 로직용 — Book 엔티티 반환
+    public Book getOrCreateBookEntity(String bookId) {
+        return bookRepository.findById(bookId)
+                .orElseGet(() -> {
+                    bookCommandService.createBook(new CreateBookCommand(bookId));
+                    return bookRepository.findById(bookId)
+                            .orElseThrow(NotFoundBookException::new);
+                });
     }
 }

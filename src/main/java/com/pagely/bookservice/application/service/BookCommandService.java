@@ -35,6 +35,10 @@ public class BookCommandService {
      * </ul>
      */
     public BookResult createBook(CreateBookCommand command) {
+        return BookResult.from(createBookEntity(command));
+    }
+
+    public Book createBookEntity(CreateBookCommand command) {
         BookResult item = aladinProvider.getItem(command.bookId());
         try {
             Book saved = bookRepository.save(
@@ -45,14 +49,12 @@ public class BookCommandService {
             bookStatsRepository.save(BookStats.builder()
                     .bookId(command.bookId())
                     .build());
-            log.debug("도서 통계 생성 bookId: {}", command.bookId());
 
-            log.info("도서 생성");
-            return BookResult.from(saved);
+            return saved;
         } catch (DataIntegrityViolationException e) {
             log.debug("동시 생성 요청으로 중복 발생. bookId: {}", command.bookId());
-            return BookResult.from(bookRepository.findById(command.bookId())
-                    .orElseThrow(NotFoundBookException::new));
+            return bookRepository.findById(command.bookId())
+                    .orElseThrow(NotFoundBookException::new);
         }
     }
 }

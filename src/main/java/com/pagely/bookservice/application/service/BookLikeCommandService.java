@@ -1,5 +1,6 @@
 package com.pagely.bookservice.application.service;
 
+import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.command.CreateBookLikeCommand;
 import com.pagely.bookservice.application.dto.command.DeleteBookLikeCommand;
 import com.pagely.bookservice.domain.event.BookEvents;
@@ -45,7 +46,7 @@ public class BookLikeCommandService {
             throw new DuplicatedBookLikeException();
         }
 
-        Book book = bookGetOrCreateService.getOrCreateBookEntity(command.bookId());
+        Book book = bookGetOrCreateService.getOrCreateBookEntity(new CreateBookCommand(command.bookId()));
 
         bookLikeRepository.save(BookLike.create(book, command.userId(), bookEvents));
 
@@ -63,7 +64,7 @@ public class BookLikeCommandService {
         BookLike bookLike = bookLikeRepository.findById(bookLikeId)
                 .orElseThrow(NotFoundLikeException::new);
 
-        Book book = bookGetOrCreateService.getOrCreateBookEntity(command.bookId());
+        Book book = bookGetOrCreateService.getOrCreateBookEntity(new CreateBookCommand(command.bookId()));
         bookLike.hardDelete(book, bookLikeId, bookLikeDeleteService, bookEvents);
 
         BookStats bookStats = bookStatsRepository.findById(command.bookId())

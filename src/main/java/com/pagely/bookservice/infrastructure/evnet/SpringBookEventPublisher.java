@@ -3,6 +3,7 @@ package com.pagely.bookservice.infrastructure.evnet;
 import com.pagely.bookservice.domain.event.BookEvents;
 import com.pagely.bookservice.domain.event.payload.BookCreatedEvent;
 import com.pagely.bookservice.domain.event.payload.BookLikedEvent;
+import com.pagely.bookservice.domain.event.payload.BookSearchedEvent;
 import com.pagely.bookservice.domain.event.payload.BookUnlikedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,6 +27,11 @@ public class SpringBookEventPublisher implements BookEvents {
 
     @Override
     public void bookUnliked(BookUnlikedEvent event) {
+        applicationEventPublisher.publishEvent(event);
+    }
+
+    @Override
+    public void bookSearched(BookSearchedEvent event) {
         applicationEventPublisher.publishEvent(event);
     }
 }

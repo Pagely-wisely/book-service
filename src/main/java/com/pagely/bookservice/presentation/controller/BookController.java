@@ -2,7 +2,9 @@ package com.pagely.bookservice.presentation.controller;
 
 import com.pagely.bookservice.application.dto.command.CreateBookLikeCommand;
 import com.pagely.bookservice.application.dto.command.DeleteBookLikeCommand;
+import com.pagely.bookservice.application.dto.command.GetBookCommand;
 import com.pagely.bookservice.application.dto.command.SearchBookCommand;
+import com.pagely.bookservice.application.dto.result.BookDetailResult;
 import com.pagely.bookservice.application.dto.result.BookSearchListResult;
 import com.pagely.bookservice.application.service.BookLikeCommandService;
 import com.pagely.bookservice.application.service.BookQueryService;
@@ -63,5 +65,14 @@ public class BookController {
                 PageResponse.of(result.items(), pageable.getPageNumber(),
                         pageable.getPageSize(), result.totalResults())
         );
+    }
+
+    @GetMapping("/{bookId}")
+    public ResponseEntity<ApiResponse> getBook(
+            @RequestHeader("X-User-Id") UUID userId,
+            @PathVariable String bookId
+    ) {
+        BookDetailResult result = bookQueryService.getBook(new GetBookCommand(bookId, userId));
+        return ApiResponse.ok(result);
     }
 }

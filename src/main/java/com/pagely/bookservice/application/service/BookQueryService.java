@@ -1,6 +1,9 @@
 package com.pagely.bookservice.application.service;
 
+import com.pagely.bookservice.application.dto.command.GetBookCommand;
 import com.pagely.bookservice.application.dto.command.SearchBookCommand;
+import com.pagely.bookservice.application.dto.result.BookDetailResult;
+import com.pagely.bookservice.application.dto.result.BookResult;
 import com.pagely.bookservice.application.dto.result.BookSearchListResult;
 import com.pagely.bookservice.application.dto.result.BookSummaryResult;
 import com.pagely.bookservice.application.port.out.AladinProvider;
@@ -57,6 +60,20 @@ public class BookQueryService {
                 .toList();
 
         return new BookSearchListResult(content, searchResponse.totalResults());
+    }
+
+    public BookDetailResult getBook(GetBookCommand command) {
+        BookResult book = aladinProvider.getItem(command.bookId());
+
+        BookDetailResult bookDetail = bookStatsRepository.findById(command.bookId())
+                .map((stats) -> BookDetailResult.from(book).withStats(stats))
+                .orElseGet(() -> BookDetailResult.from(book));
+
+        bookEvents.bookSearched(
+                BookSearchedEvent.ofDetail(command.userId(), command.bookId(), book.title(), book.categoryName(),
+                        book.author()));
+
+        return bookDetail;
     }
 
 }

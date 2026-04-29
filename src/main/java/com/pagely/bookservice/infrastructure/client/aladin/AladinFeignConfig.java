@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AladinFeignConfig {
     private final String output = "js";
-    private final String itemIdType = "ISBN13";
     private final String version = "20131101";
     @Value("${api.aladin.ttbkey}")
     private String ttbkey;
@@ -18,7 +17,6 @@ public class AladinFeignConfig {
         return requestTemplate -> {
             requestTemplate.query("ttbkey", ttbkey);
             requestTemplate.query("output", output);
-            requestTemplate.query("itemIdType", itemIdType);
             requestTemplate.query("Version", version);
         };
     }

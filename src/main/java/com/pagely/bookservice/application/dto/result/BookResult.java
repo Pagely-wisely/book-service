@@ -2,37 +2,29 @@ package com.pagely.bookservice.application.dto.result;
 
 import com.pagely.bookservice.domain.model.Book;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class BookResult {
-    private String id;
-    private String title;
-    private String author;
-    private String publisher;
-    private String thumbnailUrl;
-    private String description;
-    private LocalDateTime publishedAt;
-    private Long categoryId;
-    private String categoryName;
-
+public record BookResult(
+        String id,
+        String title,
+        String author,
+        String publisher,
+        String thumbnailUrl,
+        String description,
+        LocalDateTime publishedAt,
+        Long categoryId,
+        String categoryName
+) {
     public static BookResult from(Book book) {
-        return BookResult.builder()
-                .id(book.getId())
-                .title(book.getTitle())
-                .author(book.getAuthors())
-                .publisher(book.getPublisher())
-                .thumbnailUrl(book.getThumbnailUrl())
-                .description(book.getDescription())
-                .publishedAt(book.getPublishedAt())
-                .categoryId(book.getCategory().getId())
-                .categoryName(book.getCategory().getName())
-                .build();
+        return new BookResult(
+                book.getId(),
+                book.getTitle(),
+                book.getAuthors(),
+                book.getPublisher(),
+                book.getThumbnailUrl(),
+                book.getDescription(),
+                book.getPublishedAt(),
+                book.getCategory().getId(),
+                book.getCategory().getName()
+        );
     }
 }

@@ -12,7 +12,7 @@ public record SearchBookCommand(
         @NotBlank
         String query,
 
-        @NotNull
+        @NotBlank
         String queryType,
 
         @NotNull

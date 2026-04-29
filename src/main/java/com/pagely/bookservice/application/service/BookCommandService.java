@@ -42,9 +42,9 @@ public class BookCommandService {
         BookResult item = aladinProvider.getItem(command.bookId());
         try {
             Book saved = bookRepository.save(
-                    Book.create(item.getId(), item.getTitle(), item.getAuthor(), item.getPublisher(),
-                            item.getThumbnailUrl(), item.getDescription(), item.getPublishedAt(),
-                            item.getCategoryId(), item.getCategoryName(), bookEvents));
+                    Book.create(item.id(), item.title(), item.author(), item.publisher(),
+                            item.thumbnailUrl(), item.description(), item.publishedAt(),
+                            item.categoryId(), item.categoryName(), bookEvents));
 
             bookStatsRepository.save(BookStats.builder()
                     .bookId(command.bookId())

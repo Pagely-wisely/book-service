@@ -2,6 +2,7 @@ package com.pagely.bookservice.domain.event;
 
 import com.pagely.bookservice.domain.event.payload.BookCreatedEvent;
 import com.pagely.bookservice.domain.event.payload.BookLikedEvent;
+import com.pagely.bookservice.domain.event.payload.BookSearchedEvent;
 import com.pagely.bookservice.domain.event.payload.BookUnlikedEvent;
 
 public interface BookEvents {
@@ -10,4 +11,6 @@ public interface BookEvents {
     void bookLiked(BookLikedEvent event);
 
     void bookUnliked(BookUnlikedEvent event);
+
+    void bookSearched(BookSearchedEvent event);
 }

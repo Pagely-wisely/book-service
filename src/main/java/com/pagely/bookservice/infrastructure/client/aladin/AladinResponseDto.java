@@ -27,17 +27,9 @@ public record AladinResponseDto(
 
         AladinItemDto targetItem = item.getFirst();
 
-        return BookResult.builder()
-                .id(targetItem.isbn13())
-                .title(targetItem.title())
-                .author(targetItem.author())
-                .publisher(targetItem.publisher())
-                .thumbnailUrl(targetItem.cover())
-                .description(targetItem.description())
-                .publishedAt(parsePublishedAt(targetItem.pubDate()))
-                .categoryId((long) targetItem.categoryId())
-                .categoryName(targetItem.categoryName())
-                .build();
+        return new BookResult(targetItem.isbn13, targetItem.title, targetItem.author, targetItem.publisher,
+                targetItem.cover, targetItem.description, parsePublishedAt(targetItem.pubDate()),
+                (long) targetItem.categoryId, targetItem.categoryName);
     }
 
     private LocalDateTime parsePublishedAt(String pubDate) {
@@ -71,7 +63,7 @@ public record AladinResponseDto(
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record SeriesInfo(int seriesId, String seriesName, String seriesLink) {
     }
-    
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record SubInfo(String subTitle, String originalTitle, int itemPage) {
     }

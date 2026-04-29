@@ -3,19 +3,12 @@ package com.pagely.bookservice.application.dto.command;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
-import org.springframework.data.domain.Pageable;
 
-public record SearchBookCommand(
-        @NotNull
-        UUID userId,
-
+public record GetBookCommand(
         @NotBlank
-        String query,
-
-        @NotBlank
-        String queryType,
+        String bookId,
 
         @NotNull
-        Pageable pageable
+        UUID userId
 ) {
 }

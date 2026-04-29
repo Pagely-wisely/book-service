@@ -1,5 +1,8 @@
 package com.pagely.bookservice.domain.model;
 
+import com.pagely.bookservice.domain.event.BookEvents;
+import com.pagely.bookservice.domain.event.payload.BookLikedEvent;
+import com.pagely.bookservice.domain.event.payload.BookUnlikedEvent;
 import com.pagely.bookservice.domain.service.BookLikeDeleteService;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,14 +58,29 @@ public class BookLike {
     @Column(name = "created_by", nullable = false, updatable = false)
     private UUID createdBy;
 
-    @Builder
-    public BookLike(String bookId, UUID userId) {
+    @Builder(access = AccessLevel.PRIVATE)
+    private BookLike(String bookId, UUID userId) {
         this.bookId = bookId;
         this.userId = userId;
     }
 
-    public void hardDelete(BookLikeId requester, BookLikeDeleteService bookLikeDeleteService) {
-        bookLikeDeleteService.deleteBookLike(this, requester);
+    public static BookLike create(Book book, UUID userId, BookEvents events) {
+        BookLike like = BookLike.builder()
+                .userId(userId)
+                .bookId(book.getId())
+                .build();
+
+        events.bookLiked(BookLikedEvent.of(like, book));
+
+        return like;
+    }
+
+
+    public void hardDelete(Book book, BookLikeId bookLikeId, BookLikeDeleteService bookLikeDeleteService,
+                           BookEvents events) {
+        bookLikeDeleteService.deleteBookLike(this, bookLikeId);
+
+        events.bookUnliked(BookUnlikedEvent.of(this, book));
     }
 
     @Getter

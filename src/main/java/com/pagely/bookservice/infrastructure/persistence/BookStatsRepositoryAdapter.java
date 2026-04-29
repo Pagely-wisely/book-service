@@ -2,6 +2,7 @@ package com.pagely.bookservice.infrastructure.persistence;
 
 import com.pagely.bookservice.domain.model.BookStats;
 import com.pagely.bookservice.domain.repository.BookStatsRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,11 @@ public class BookStatsRepositoryAdapter implements BookStatsRepository {
     @Override
     public Optional<BookStats> findById(String bookId) {
         return jpaBookStatsRepository.findById(bookId);
+    }
+
+    @Override
+    public List<BookStats> findByIds(List<String> bookIds) {
+        return jpaBookStatsRepository.findByBookIdIn(bookIds);
     }
 
     @Override

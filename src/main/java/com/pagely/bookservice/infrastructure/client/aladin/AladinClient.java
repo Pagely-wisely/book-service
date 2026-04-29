@@ -14,6 +14,19 @@ public interface AladinClient {
 
     @GetMapping(value = "/ItemLookUp.aspx")
     AladinResponseDto getItem(
-            @RequestParam("ItemId") String ItemId
+            @RequestParam("ItemId")
+            String ItemId,
+            @RequestParam(value = "itemIdType", defaultValue = "ISBN13")
+            String itemIdType
     );
+
+    @GetMapping("/ItemSearch.aspx")
+    AladinSearchResponseDto searchItems(
+            @RequestParam("Query") String query,
+            @RequestParam(value = "QueryType", defaultValue = "Title") String queryType,
+            @RequestParam(value = "MaxResults", defaultValue = "10") int maxResults,
+            @RequestParam(value = "start", defaultValue = "1") int start,
+            @RequestParam(value = "SearchTarget", defaultValue = "Book") String searchTarget
+    );
+
 }

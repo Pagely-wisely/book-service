@@ -8,6 +8,8 @@ import com.pagely.bookservice.application.dto.result.BookDetailResult;
 import com.pagely.bookservice.application.dto.result.BookSearchListResult;
 import com.pagely.bookservice.application.service.BookLikeCommandService;
 import com.pagely.bookservice.application.service.BookQueryService;
+import com.pagely.common.auth.Role;
+import com.pagely.common.auth.annotation.AuthRequired;
 import com.pagely.common.pagination.PageRequest;
 import com.pagely.common.pagination.PageResponse;
 import com.pagely.common.response.ApiResponse;
@@ -32,6 +34,7 @@ public class BookController {
     private final BookQueryService bookQueryService;
 
     @PostMapping("/{bookId}/like")
+    @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> addLike(
             @PathVariable String bookId,
             @RequestHeader("X-User-Id") UUID userId
@@ -41,6 +44,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{bookId}/like")
+    @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> removeLike(
             @PathVariable String bookId,
             @RequestHeader("X-User-Id") UUID userId
@@ -50,6 +54,7 @@ public class BookController {
     }
 
     @GetMapping("/search")
+    @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> searchBooks(
             @RequestHeader("X-User-Id") UUID userId,
             @RequestParam String query,
@@ -68,6 +73,7 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}")
+    @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> getBook(
             @RequestHeader("X-User-Id") UUID userId,
             @PathVariable String bookId

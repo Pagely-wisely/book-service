@@ -4,7 +4,12 @@ import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.result.BookResult;
 import com.pagely.bookservice.application.service.BookGeneratorService;
 import com.pagely.bookservice.application.service.BookGetOrCreateService;
+import com.pagely.common.auth.Role;
+import com.pagely.common.auth.annotation.AuthRequired;
+import com.pagely.common.auth.annotation.CurrentUserId;
+import com.pagely.common.auth.annotation.CurrentUserRole;
 import com.pagely.common.response.ApiResponse;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,7 @@ public class InternalBookController {
     private final BookGeneratorService bookGeneratorService;
 
     @GetMapping("/{bookId}")
+    @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> getBook(
             @PathVariable String bookId
     ) {
@@ -32,8 +38,12 @@ public class InternalBookController {
     }
 
     @PostMapping("/generator")
-    public ResponseEntity<ApiResponse> triggerGenerator() {
-        bookGeneratorService.generateBooksFromFile();
+    @AuthRequired(role = Role.MASTER)
+    public ResponseEntity<ApiResponse> triggerGenerator(
+            @CurrentUserId UUID userId,
+            @CurrentUserRole Role role
+    ) {
+        bookGeneratorService.generateBooksFromFile(userId, role);
         // TODO: ACCEPT 같은 비동기 처리 응답 상태 필요
         return ApiResponse.ok();
     }

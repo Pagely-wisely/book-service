@@ -10,6 +10,7 @@ import com.pagely.bookservice.application.service.BookLikeCommandService;
 import com.pagely.bookservice.application.service.BookQueryService;
 import com.pagely.common.auth.Role;
 import com.pagely.common.auth.annotation.AuthRequired;
+import com.pagely.common.auth.annotation.CurrentUserId;
 import com.pagely.common.pagination.PageRequest;
 import com.pagely.common.pagination.PageResponse;
 import com.pagely.common.response.ApiResponse;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +37,7 @@ public class BookController {
     @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> addLike(
             @PathVariable String bookId,
-            @RequestHeader("X-User-Id") UUID userId
+            @CurrentUserId UUID userId
     ) {
         bookLikeCommandService.createBookLike(new CreateBookLikeCommand(bookId, userId));
         return ApiResponse.created();
@@ -47,7 +47,7 @@ public class BookController {
     @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> removeLike(
             @PathVariable String bookId,
-            @RequestHeader("X-User-Id") UUID userId
+            @CurrentUserId UUID userId
     ) {
         bookLikeCommandService.deleteBookLike(new DeleteBookLikeCommand(bookId, userId));
         return ApiResponse.ok();
@@ -56,7 +56,7 @@ public class BookController {
     @GetMapping("/search")
     @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> searchBooks(
-            @RequestHeader("X-User-Id") UUID userId,
+            @CurrentUserId UUID userId,
             @RequestParam String query,
             @RequestParam(defaultValue = "Title") String queryType,
             @RequestParam(defaultValue = "0") int page,
@@ -75,7 +75,7 @@ public class BookController {
     @GetMapping("/{bookId}")
     @AuthRequired(role = {Role.MASTER, Role.USER, Role.CREATOR})
     public ResponseEntity<ApiResponse> getBook(
-            @RequestHeader("X-User-Id") UUID userId,
+            @CurrentUserId UUID userId,
             @PathVariable String bookId
     ) {
         BookDetailResult result = bookQueryService.getBook(new GetBookCommand(bookId, userId));

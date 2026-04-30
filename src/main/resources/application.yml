@@ -33,12 +33,12 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.add.type.headers: true
+        spring.json.add.type.headers: false
 
 logging:
   level:
     org.flywaydb: info
-    com.pagely.bookservice: debug
+    com.pagely.bookservice: info
 
 eureka:
   client:

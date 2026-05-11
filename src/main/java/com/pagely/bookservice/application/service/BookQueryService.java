@@ -1,5 +1,6 @@
 package com.pagely.bookservice.application.service;
 
+import com.pagely.bookservice.application.dto.command.CreateBookCommand;
 import com.pagely.bookservice.application.dto.command.GetBookCommand;
 import com.pagely.bookservice.application.dto.command.SearchBookCommand;
 import com.pagely.bookservice.application.dto.result.BookDetailResult;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookQueryService {
     private final AladinProvider aladinProvider;
     private final BookStatsRepository bookStatsRepository;
+    private final BookGetOrCreateService bookGetOrCreateService;
     private final BookEvents bookEvents;
 
     public BookSearchListResult searchBooks(SearchBookCommand command) {
@@ -63,7 +65,8 @@ public class BookQueryService {
     }
 
     public BookDetailResult getBook(GetBookCommand command) {
-        BookResult book = aladinProvider.getItem(command.bookId());
+//        BookResult book = aladinProvider.getItem(command.bookId());
+        BookResult book = bookGetOrCreateService.getOrCreateBook(new CreateBookCommand(command.bookId()));
 
         BookDetailResult bookDetail = bookStatsRepository.findById(command.bookId())
                 .map((stats) -> BookDetailResult.from(book).withStats(stats))

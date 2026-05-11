@@ -38,13 +38,24 @@ spring:
 logging:
   level:
     org.flywaydb: info
-    com.pagely.bookservice: info
+    com.pagely.bookservice: debug
 
 eureka:
   client:
-    enabled: false
     register-with-eureka: false
     fetch-registry: false
+#    service-url:
+#      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8000/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus, metrics
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
 
 api:
   aladin:

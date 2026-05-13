@@ -23,6 +23,7 @@ public class AladinProviderAdapter implements AladinProvider {
 
     @Override
     public BookResult getItem(String bookId) {
+        log.debug("알라딘 API 도서정보 가져오기 bookId:{}", bookId);
         AladinResponseDto item = aladinClient.getItem(bookId, DEFAULT_ITEM_ID_TYPE);
         if (Objects.isNull(item)
                 || Objects.isNull(item.item())) {

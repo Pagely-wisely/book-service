@@ -2,6 +2,7 @@ import http, { setResponseCallback } from 'k6/http';
 import { check, sleep } from 'k6';
 import { SharedArray } from 'k6/data';
 import { BASE_URL, DEFAULT_HEADERS } from '../config.js';
+import { htmlReport } from '../lib/k6-reporter.js';
 
 setResponseCallback(http.expectedStatuses(200, 201, 400, 404));
 
@@ -118,5 +119,6 @@ export function handleSummary(data) {
 
     return {
         'k6/results/stress_extended_summary.json': JSON.stringify(data, null, 2),
+        'k6/results/stress_extended_summary.html': htmlReport(data),
     };
 }

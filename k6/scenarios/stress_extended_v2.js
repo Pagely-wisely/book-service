@@ -120,6 +120,6 @@ export function handleSummary(data) {
 
     return {
         'k6/results/stress_extended_v2_summary.json': JSON.stringify(data, null, 2),
-        'k6/results/stress_extended_summary.html': htmlReport(data),
+        'k6/results/stress_extended_v2_summary.html': htmlReport(data),
     };
 }

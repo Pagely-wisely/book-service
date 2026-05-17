@@ -86,3 +86,4 @@ jobs:
             docker compose pull book-service
             docker compose up -d --no-deps book-service
             docker image prune -f
+

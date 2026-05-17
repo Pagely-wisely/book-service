@@ -1,0 +1,62 @@
+server:
+  port: 19051
+
+spring:
+  config:
+    import: optional:classpath:/.env[.properties]
+
+  application:
+    name: bookservice
+
+  datasource:
+    url: jdbc:postgresql://${HOST:host.docker.internal}:${DB_PORT}/${BOOK_DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_EXTERNAL_HOST:host.docker.internal}:${KAFKA_EXTERNAL_PORT}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+logging:
+  level:
+    org.flywaydb: info
+    com.pagely.bookservice: info
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://host.docker.internal:8000/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus, metrics
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+api:
+  aladin:
+    ttbkey: ${TTBKEY}

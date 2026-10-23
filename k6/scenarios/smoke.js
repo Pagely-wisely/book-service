@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
 import {BASE_URL, DEFAULT_HEADERS, SMOKE_OPTIONS} from '../config.js';
+import { htmlReport } from '../lib/k6-reporter.js';
 
 export const options = SMOKE_OPTIONS;
 
@@ -102,5 +103,6 @@ export function handleSummary(data) {
 
     return {
         'k6/results/smoke_summary.json': JSON.stringify(data, null, 2),
+        'k6/results/smoke_summary.html': htmlReport(data),
     };
 }
